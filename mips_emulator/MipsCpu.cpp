@@ -11,7 +11,6 @@
 #define MIPS_PRG_START_ADDR   0x00040000U  // Program start location
 
 #define SP_REG  29
-#define PC_REG  31
 
 #define BGEZ_OPCODE   0x01  // rt = 0x01
 #define BGEZAL_OPCODE 0x01  // rt = 0x11
@@ -39,13 +38,12 @@ public:
     pMipsCpu():
         mmu(MIPS_STACK_START_ADDR, MIPS_STACK_SIZE)
     {
-        memset(&gp_reg[0], 0x00, sizeof(gp_reg));
+        memset(&registers[0], 0x00, sizeof(registers));
         pc = 0x004000d0;
     }
     
     ~pMipsCpu()
     {
-        
     }
     
     void Run()
@@ -156,9 +154,11 @@ private:
     
     RInstProc rinst;
     Mmu mmu;
-    uint32_t gp_reg[MIPS_NUM_REGISTERS];
+    uint32_t registers[MIPS_NUM_REGISTERS];
     uint32_t pc;
     uint32_t cpu_cycles;
+    
+    friend class JInstProc;
 
 };
 

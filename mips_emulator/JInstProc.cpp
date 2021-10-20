@@ -15,19 +15,10 @@ JInstProc::~JInstProc()
 
 void JInstProc::ProcessInstruction(MipsInstruction &inst)
 {
-    uint32_t pc = 0;
-    uint32_t r31 = pc;
-    switch (inst.opcode) {
-        case J_OPCODE:
-            pc = (pc & 0xf0000000) | (inst.j_inst.addr << 2);
-            break;
-        case JAL_OPCODE:
-            pc = (pc & 0xf0000000) | (inst.j_inst.addr << 2);
-            r31 = pc;
-            break;
-        default:
-            std::cout << "Invalid J-Type Instruction!" << std::endl;
-            assert(false);
-            break;
+    /*
+    if (inst.opcode == JAL_OPCODE) {
+        priv->registers[31] = priv->pc;
     }
+    priv->pc = (priv->pc & 0xf0000000) | (inst.j_inst.addr << 2);
+    */
 }
