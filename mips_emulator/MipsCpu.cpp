@@ -13,9 +13,6 @@
 #define SP_REG  29
 #define PC_REG  31
 
-#define J_OPCODE   0x02
-#define JAL_OPCODE 0x03
-
 #define BGEZ_OPCODE   0x01  // rt = 0x01
 #define BGEZAL_OPCODE 0x01  // rt = 0x11
 #define BLTZ_OPCODE   0x01  // rt = 0x00
