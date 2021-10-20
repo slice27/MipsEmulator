@@ -2,15 +2,17 @@
 #include <iomanip>
 #include "MipsCpu.h"
 #include "Mmu.h"
+#include "instruction.h"
+#include "RInstProc.h"
 
 #define MIPS_NUM_REGISTERS    32U
 #define MIPS_STACK_START_ADDR 0x80000000U  // The MIPS 1 stack starts here
 #define MIPS_STACK_SIZE       0x00004000U  // 16KB stack size (to start)
 #define MIPS_PRG_START_ADDR   0x00040000U  // Program start location
+
 #define SP_REG  29
 #define PC_REG  31
 
-#define ALU_OPCODE 0x00
 #define J_OPCODE   0x02
 #define JAL_OPCODE 0x03
 
@@ -34,34 +36,6 @@
 #define LUI_OPCODE    0x0f
 
 
-struct r_instruction {
-    uint32_t rs;
-    uint32_t rt;
-    uint32_t rd;
-    uint32_t shft_amt;
-    uint32_t func;
-};
-
-struct i_instruction {
-    uint32_t rs;
-    uint32_t rt;
-    uint32_t immed;
-};
-
-struct j_instruction {
-    uint32_t addr;
-};
-
-struct MipsInstruction
-{
-    uint32_t opcode;
-    union {
-        struct r_instruction r_inst;
-        struct i_instruction i_inst;
-        struct j_instruction j_inst;
-    };
-};
-
 class pMipsCpu
 {
 public:
@@ -70,7 +44,6 @@ public:
     {
         memset(&gp_reg[0], 0x00, sizeof(gp_reg));
         pc = 0x004000d0;
-        //registers[
     }
     
     ~pMipsCpu()
@@ -141,14 +114,16 @@ public:
 private:
     uint32_t Fetch()
     {
-        return mmu[pc];
+        uint32_t op_addr = pc;
+        pc += sizeof(uint32_t);
+        return mmu[op_addr];
     }
     
     void Decode(uint32_t instruction, MipsInstruction& decoded)
     {
         decoded.opcode = (instruction >> 26) & 0x0000003f;
         switch (decoded.opcode) {
-            case ALU_OPCODE:  // All of the ALU operations run on opcode 0 (R type)
+            case RINST_OPCODE:  // All of the ALU operations run on opcode 0 (R type)
                 decoded.r_inst.rs = (instruction >> 21) & 0x0000001f;
                 decoded.r_inst.rt = (instruction >> 16) & 0x0000001f;
                 decoded.r_inst.rd = (instruction >> 11) & 0x0000001f;
@@ -170,10 +145,8 @@ private:
     void Execute(MipsInstruction &inst)
     {
         switch (inst.opcode) {
-            case ALU_OPCODE:
-                switch (inst.r_inst.func) {
-                    
-                }
+            case RINST_OPCODE:
+                rinst.ProcessInstruction(inst);
                 break;
             case J_OPCODE:
             case JAL_OPCODE:
@@ -184,6 +157,7 @@ private:
         }
     }
     
+    RInstProc rinst;
     Mmu mmu;
     uint32_t gp_reg[MIPS_NUM_REGISTERS];
     uint32_t pc;
