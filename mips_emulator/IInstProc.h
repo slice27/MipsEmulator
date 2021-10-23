@@ -1,11 +1,20 @@
 #ifndef _IINSTPROC_H_
 #define _IINSTPROC_H_
 
-class IInstProc
+#include "InstProc.h"
+
+class IInstProc: public InstProc
 {
 public:
-    IInstProc();
-    ~IInstProc();
+    IInstProc(std::shared_ptr<pMipsCpu> cpu);
+    virtual ~IInstProc();
+    
+    IInstProc(const IInstProc&) = delete;
+    IInstProc& operator=(const IInstProc&) = delete;
+    IInstProc(IInstProc&&) = delete;
+    IInstProc& operator=(IInstProc&&) = delete;
+    
+    virtual void ProcessInstruction(MipsInstruction &inst);
 
 };
 
