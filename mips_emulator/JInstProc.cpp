@@ -1,11 +1,14 @@
 #include <stdint.h>
 #include <iostream>
+#include "MipsCpu.h"
+#include "InstProc.h"
 #include "JInstProc.h"
 
 #define J_OPCODE   0x02
 #define JAL_OPCODE 0x03
 
-JInstProc::JInstProc()
+JInstProc::JInstProc(std::shared_ptr<pMipsCpu> cpu):
+    InstProc(cpu)
 {
 }
 

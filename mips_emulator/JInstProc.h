@@ -6,18 +6,18 @@
 #define JINST_OPCODE     0x02
 #define JALINST_OPCODE   0x03
 
-class JInstProc
+class JInstProc: public InstProc
 {
 public:
-    JInstProc();
-    ~JInstProc();
+    JInstProc(std::shared_ptr<pMipsCpu> cpu);
+    virtual ~JInstProc();
 
     JInstProc(const JInstProc&) = delete;
     JInstProc& operator=(const JInstProc&) = delete;
     JInstProc(JInstProc&&) = delete;
     JInstProc& operator=(JInstProc&&) = delete;
     
-    void ProcessInstruction(MipsInstruction &inst);
+    virtual void ProcessInstruction(MipsInstruction &inst);
     
 };
 
