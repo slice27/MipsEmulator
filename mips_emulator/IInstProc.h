@@ -3,6 +3,9 @@
 
 #include "InstProc.h"
 
+// TODO: Potentially remove this code if it takes too long.  IInstProc, JInstProc, and RInstProc
+//       don't need the inheritance, and their ProcessInstruction can take a pointer to the CPU.
+
 class IInstProc: public InstProc
 {
 public:
