@@ -8,12 +8,12 @@
 #include "JInstProc.h"
 #include "IInstProc.h"
 
-class pMipsCpu: std::enable_shared_from_this<pMipsCpu>
+class pMipsCpu
 {
 public:
     pMipsCpu();
     ~pMipsCpu();
-    
+
     void LoadProgram(uint32_t inst[], uint32_t num_inst);
     void Run();
     
@@ -22,6 +22,7 @@ private:
     
     void Decode(uint32_t instruction, MipsInstruction& decoded);
     void Execute(MipsInstruction &inst);
+    void PrintRegisters();
     
     friend class RInstProc;
     friend class JInstProc;
@@ -33,6 +34,9 @@ private:
     Mmu mmu;
     uint32_t registers[MIPS_NUM_REGISTERS];
     uint32_t pc;
+    uint32_t hi;
+    uint32_t lo;
+    uint32_t epc;
     uint32_t cpu_cycles;
     bool halted;
 

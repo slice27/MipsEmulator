@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include "IInstProc.h"
 #include "priv_mips_cpu.h"
 
@@ -20,8 +21,7 @@
 #define XORI_OPCODE   0x0e
 #define LUI_OPCODE    0x0f
 
-IInstProc::IInstProc(std::shared_ptr<pMipsCpu> cpu):
-    InstProc(cpu)
+IInstProc::IInstProc()
 {
 }
 
@@ -29,11 +29,18 @@ IInstProc::~IInstProc()
 {
 }
 
-void IInstProc::ProcessInstruction(MipsInstruction& inst)
+void IInstProc::ProcessInstruction(pMipsCpu* cpu, MipsInstruction& inst)
 {
     switch (inst.opcode) {
         case ADDIU_OPCODE:
+            std::cout << std::setfill('0') << std::setw(0) << std::right << std::hex;
+            std::cout << "RS (" << inst.i_inst.rs << "): 0x" << cpu->registers[inst.i_inst.rs];
+            std::cout << "RT (" << inst.i_inst.rt << "): 0x" << cpu->registers[inst.i_inst.rt];
+            std::cout << "Adding " << std::dec << inst.i_inst.immed << std::hex;
             cpu->registers[inst.i_inst.rt] = cpu->registers[inst.i_inst.rs] + inst.i_inst.immed;
+            
+            std::cout << "RS (" << inst.i_inst.rs << "): 0x" << cpu->registers[inst.i_inst.rs];
+            std::cout << "RT (" << inst.i_inst.rt << "): 0x" << cpu->registers[inst.i_inst.rt];
             break;
         default:
             std::cout << "Unimplemented I-Type instruction!" << std::endl;

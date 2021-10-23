@@ -1,12 +1,10 @@
 #include <stdint.h>
 #include <iostream>
 #include "MipsCpu.h"
-#include "InstProc.h"
 #include "JInstProc.h"
 #include "priv_mips_cpu.h"
 
-JInstProc::JInstProc(std::shared_ptr<pMipsCpu> cpu):
-    InstProc(cpu)
+JInstProc::JInstProc()
 {
 }
 
@@ -14,7 +12,7 @@ JInstProc::~JInstProc()
 {
 }
 
-void JInstProc::ProcessInstruction(MipsInstruction &inst)
+void JInstProc::ProcessInstruction(pMipsCpu* cpu, MipsInstruction &inst)
 {
     if (inst.opcode == JALINST_OPCODE) {
         cpu->registers[31] = cpu->pc;

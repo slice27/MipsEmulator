@@ -6,9 +6,6 @@
 #define SP_REG  29
 
 pMipsCpu::pMipsCpu():
-    rinst(shared_from_this()),
-    jinst(shared_from_this()),
-    iinst(shared_from_this()),
     mmu(MIPS_STACK_START_ADDR, MIPS_STACK_SIZE),
     halted(false)
 {
@@ -35,10 +32,11 @@ void pMipsCpu::Run()
     
     MipsInstruction inst;
     while (!halted) {
+        PrintRegisters();
         uint32_t opcode = Fetch();
         Decode(opcode, inst);
         Execute(inst);
-        
+        PrintRegisters();
         ++cpu_cycles;
         assert(false);
     }
@@ -81,16 +79,44 @@ void pMipsCpu::Execute(MipsInstruction &inst)
 {
     switch (inst.opcode) {
         case RINST_OPCODE:
-            rinst.ProcessInstruction(inst);
+            rinst.ProcessInstruction(this, inst);
             break;
         case JINST_OPCODE:
         case JALINST_OPCODE:
-            jinst.ProcessInstruction(inst);
+            jinst.ProcessInstruction(this, inst);
             break;
         default:
-            iinst.ProcessInstruction(inst);
+            iinst.ProcessInstruction(this, inst);
             break;
     }
+}
+
+void pMipsCpu::PrintRegisters()
+{
+    std::cout << "Cycles: " << cpu_cycles << std::endl;
+    std::cout << std::setfill('0') << std::setw(8) << std::right << std::hex;
+    std::cout << "AT: 0x" << registers[1] << std::endl;
+    std::cout << "V0: 0x" << registers[2] << "\tV1: 0x" << registers[3] << std::endl;
+    std::cout << "A0: 0x" << registers[4] << "\tA1: 0x" << registers[5];
+    std::cout << "A2: 0x" << registers[6] << "\tA3: 0x" << registers[7] << std::endl;
+    std::cout << "T0: 0x" << registers[8] << "\tT1: 0x" << registers[9] << "\t";
+    std::cout << "T2: 0x" << registers[10] << "\tT3: 0x" << registers[11] << std::endl;
+    std::cout << "T4: 0x" << registers[12] << "\tT5: 0x" << registers[13] << "\t";
+    std::cout << "T6: 0x" << registers[14] << "\tT7: 0x" << registers[15] << std::endl;
+    
+    std::cout << "S0: 0x" << registers[16] << "\tS1: 0x" << registers[17] << "\t";
+    std::cout << "S2: 0x" << registers[18] << "\tS3: 0x" << registers[19] << std::endl;
+    std::cout << "S4: 0x" << registers[20] << "\tS5: 0x" << registers[21] << "\t";
+    std::cout << "S6: 0x" << registers[22] << "\tS7: 0x" << registers[23] << std::endl;
+    
+    std::cout << "T8: 0x" << registers[24] << "\tT9: 0x" << registers[25] << std::endl;
+    std::cout << "K0: 0x" << registers[26] << "\tK1: 0x" << registers[27] << std::endl;
+    
+    std::cout << "GP: 0x" << registers[28] << "\tSP: 0x" << registers[29] << std::endl;
+    std::cout << "S8: 0x" << registers[30] << "\tRA: 0x" << registers[31] << std::endl;
+    
+    std::cout << "LO: 0x" << lo << "\tHI: 0x" << hi << std::endl;
+    std::cout << "PC: 0x" << pc << "\tEPC: 0x" << epc << std::endl;
 }
 
 MipsCpu::MipsCpu():
