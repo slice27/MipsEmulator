@@ -3,6 +3,9 @@
 
 #include <instruction.h>
 
+#define JINST_OPCODE     0x02
+#define JALINST_OPCODE   0x03
+
 class JInstProc
 {
 public:
