@@ -1,7 +1,8 @@
 #ifndef _R_INST_PROC_H_
 #define _R_INST_PROC_H_
 
-#include <instruction.h>
+#include "instruction.h"
+#include "InstProc.h"
 
 #define RINST_OPCODE 0x00
 
@@ -41,18 +42,18 @@
 #define SLT_FUNC     42
 #define SLTU_FUNC    43
 
-class RInstProc
+class RInstProc: public InstProc
 {
 public:
-    RInstProc();
-    ~RInstProc();
+    RInstProc(std::shared_ptr<pMipsCpu> cpu);
+    virtual ~RInstProc();
     
     RInstProc(const RInstProc&) = delete;
     RInstProc& operator=(const RInstProc&) = delete;
     RInstProc(RInstProc&&) = delete;
     RInstProc& operator=(RInstProc&&) = delete;
     
-    void ProcessInstruction(MipsInstruction &inst);
+    virtual void ProcessInstruction(MipsInstruction &inst);
 
 };
 

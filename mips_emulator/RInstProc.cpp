@@ -2,7 +2,8 @@
 #include <iostream>
 #include "RInstProc.h"
 
-RInstProc::RInstProc()
+RInstProc::RInstProc(std::shared_ptr<pMipsCpu> cpu):
+    InstProc(cpu)
 {
 }
 

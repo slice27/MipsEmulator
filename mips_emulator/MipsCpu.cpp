@@ -19,8 +19,7 @@
 #define BGEZAL_OPCODE 0x01  // rt = 0x11
 #define BLTZ_OPCODE   0x01  // rt = 0x00
 #define BLTZAL_OPCODE 0x01  // rt = 0x10
-#define J_OPCODE      0x02
-#define JAL_OPCODE    0x03
+
 #define BEQ_OPCODE    0x04
 #define BNE_OPCODE    0x05
 #define BLEZ_OPCODE   0x06
@@ -35,10 +34,13 @@
 #define LUI_OPCODE    0x0f
 
 
-class pMipsCpu
+class pMipsCpu: std::enable_shared_from_this<pMipsCpu>
 {
 public:
     pMipsCpu():
+        rinst(shared_from_this()),
+        //jinst(std::make_shared<pMipsCpu>(this)),
+        //iinst(std::make_shared<pMipsCpu>(this)),
         mmu(MIPS_STACK_START_ADDR, MIPS_STACK_SIZE),
         halted(false)
     {
@@ -94,8 +96,8 @@ private:
                 decoded.r_inst.shft_amt = (instruction >> 6) & 0x0000001f;
                 decoded.r_inst.func = (instruction & 0x0000003f);
                 break;
-            case J_OPCODE:    // All of the Jump instructions use opcodes 2 and 3. (J type)
-            case JAL_OPCODE:
+            case JINST_OPCODE:    // All of the Jump instructions use opcodes 2 and 3. (J type)
+            case JALINST_OPCODE:
                 decoded.j_inst.addr = (instruction & 0x3ffffff);
                 break;
             default:          // Everything else is an I instruction (I type)
@@ -134,8 +136,6 @@ private:
     uint32_t pc;
     uint32_t cpu_cycles;
     bool halted;
-    
-    friend class JInstProc;
 
 };
 

@@ -1,6 +1,8 @@
 #ifndef _INSTRUCTION_H_
 #define _INSTRUCTION_H_
 
+#include <stdint.h>
+
 struct r_instruction {
     uint32_t rs;
     uint32_t rt;
