@@ -3,6 +3,7 @@
 
 #include "instruction.h"
 #include "InstProc.h"
+#include "RInstProc.h"
 
 #define RINST_OPCODE 0x00
 
