@@ -16,6 +16,7 @@ public:
     MipsCpu(MipsCpu&&) = delete;
     MipsCpu& operator=(MipsCpu&&) = delete;
     
+    void LoadProgram(uint32_t inst[], uint32_t num_inst);
     void Run();
     
 private:

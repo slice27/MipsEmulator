@@ -1,9 +1,12 @@
 #include <iostream>
 #include <iomanip>
+#include <vector>
 #include "MipsCpu.h"
 #include "Mmu.h"
 #include "instruction.h"
 #include "RInstProc.h"
+#include "JInstProc.h"
+#include "IInstProc.h"
 
 #define MIPS_NUM_REGISTERS    32U
 #define MIPS_STACK_START_ADDR 0x80000000U  // The MIPS 1 stack starts here
@@ -36,7 +39,8 @@ class pMipsCpu
 {
 public:
     pMipsCpu():
-        mmu(MIPS_STACK_START_ADDR, MIPS_STACK_SIZE)
+        mmu(MIPS_STACK_START_ADDR, MIPS_STACK_SIZE),
+        halted(false)
     {
         memset(&registers[0], 0x00, sizeof(registers));
         pc = 0x004000d0;
@@ -46,62 +50,26 @@ public:
     {
     }
     
+    void LoadProgram(uint32_t inst[], uint32_t num_inst)
+    {
+        std::cout << "Total Instructions: " << num_inst << std::endl;
+        // Push all the instructions into the MMU.
+        for (int i = 0; i < num_inst; ++i) {
+            mmu[MIPS_PRG_START_ADDR + (i * sizeof(uint32_t))] = inst[i];
+        }
+    }
+    
     void Run()
     {
-        uint32_t instructions[] = {
-            0x27bdffd8, // 0x4000d0     addiu	sp,sp,-40
-            0xafbf0024, // 0x4000d4     sw	ra,36(sp)
-            0xafbe0020, // 0x4000d8     sw	s8,32(sp)
-            0x03a0f025, // 0x4000dc     move	s8,sp
-            0xafc40028, // 0x4000e0     sw	a0,40(s8)
-            0xafc5002c, // 0x4000e4     sw	a1,44(s8)
-            0x24020002, // 0x4000e8     li	v0,2
-            0xafc20018, // 0x4000ec     sw	v0,24(s8)
-            0x8fc40018, // 0x4000f0     lw	a0,24(s8)
-            0x0c100047, // 0x4000f4     jal	40011c <square(int)>
-            0x00000000, // 0x4000f8     nop
-            0xafc20018, // 0x4000fc     sw	v0,24(s8)
-            0x8fc20018, // 0x400104     lw	v0,24(s8)
-            0x03c0e825, // 0x400100     move	sp,s8
-            0x8fbf0024, // 0x400108     lw	ra,36(sp)
-            0x8fbe0020, // 0x40010c     lw	s8,32(sp)
-            0x27bd0028, // 0x400110     addiu	sp,sp,40
-            0x03e00008, // 0x400114     jr	ra
-            0x00000000, // 0x400118     nop
-            //square(int):
-            0x27bdfff8, // 0x40011c     addiu	sp,sp,-8
-            0xafbe0004, // 0x400120     sw	s8,4(sp)
-            0x03a0f025, // 0x400124     move	s8,sp
-            0xafc40008, // 0x400128     sw	a0,8(s8)
-            0x8fc30008, // 0x40012c     lw	v1,8(s8)
-            0x8fc20008, // 0x400130     lw	v0,8(s8)
-            0x00000000, // 0x400134     nop
-            0x00620018, // 0x400138     mult	v1,v0
-            0x00001012, // 0x40013c     mflo	v0
-            0x03c0e825, // 0x400140     move	sp,s8
-            0x8fbe0004, // 0x400144     lw	s8,4(sp)
-            0x27bd0008, // 0x400148     addiu	sp,sp,8
-            0x03e00008, // 0x40014c     jr	ra
-            0x00000000, // 0x400150     nop
-        };
-        int size = sizeof(instructions) / sizeof(instructions[0]);
-
-        // Push all the instructions into the MMU.
-        for (int i = 0; i < size; ++i) {
-            mmu[MIPS_PRG_START_ADDR + (i * sizeof(uint32_t))] = instructions[i];
-        }
-
         uint64_t nop_count = 0;
-        std::cout << "Total Instructions: " << size << std::endl;
+        
         MipsInstruction inst;
-        for (int j = 0; j < 1000000000; ++j) {
-            for (int i = 0; i < size; ++i) {
-                uint32_t opcode = Fetch();
-                Decode(opcode, inst);
-                Execute(inst);
-                
-                ++cpu_cycles;
-            }
+        while (!halted) {
+            uint32_t opcode = Fetch();
+            Decode(opcode, inst);
+            Execute(inst);
+            
+            ++cpu_cycles;
         }
         std::cout << "NOP: " << nop_count << std::endl;
     }
@@ -110,6 +78,7 @@ private:
     uint32_t Fetch()
     {
         uint32_t op_addr = pc;
+        // TODO: Add breakpoint handling here.
         pc += sizeof(uint32_t);
         return mmu[op_addr];
     }
@@ -143,20 +112,28 @@ private:
             case RINST_OPCODE:
                 rinst.ProcessInstruction(inst);
                 break;
-            case J_OPCODE:
-            case JAL_OPCODE:
+            case JINST_OPCODE:
+            case JALINST_OPCODE:
+                jinst.ProcessInstruction(inst);
                 break;
-            
-                
+            default:
+                //iinst.ProcessInstruction(inst);
                 break;
         }
     }
     
+    friend class RInstProc;
+    friend class JInstProc;
+    friend class IInstProc;
+
     RInstProc rinst;
+    JInstProc jinst;
+    IInstProc iinst;
     Mmu mmu;
     uint32_t registers[MIPS_NUM_REGISTERS];
     uint32_t pc;
     uint32_t cpu_cycles;
+    bool halted;
     
     friend class JInstProc;
 
@@ -169,6 +146,11 @@ MipsCpu::MipsCpu():
 
 MipsCpu::~MipsCpu()
 {
+}
+
+void MipsCpu::LoadProgram(uint32_t inst[], uint32_t num_inst)
+{
+    priv->LoadProgram(inst, num_inst);
 }
 
 void MipsCpu::Run()
