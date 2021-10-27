@@ -6,7 +6,8 @@
 #define MIPS_NUM_REGISTERS    32U
 #define MIPS_STACK_START_ADDR 0x80000000U  // The MIPS 1 stack starts here
 #define MIPS_STACK_SIZE       0x00004000U  // 16KB stack size (to start)
-#define MIPS_PRG_START_ADDR   0x00040000U  // Program start location
+//#define MIPS_PRG_START_ADDR   0x00040000U  // Program start location
+#define MIPS_PRG_START_ADDR   0x004000d0
 
 class pMipsCpu;
 
