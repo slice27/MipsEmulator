@@ -8,6 +8,10 @@
 #include "JInstProc.h"
 #include "IInstProc.h"
 
+#define SIGN_EXTEND(X_BITS,RET,VALUE) {  \
+    struct { int32_t x: X_BITS; } s;     \
+    RET = s.x = VALUE; };
+
 class pMipsCpu
 {
 public:
