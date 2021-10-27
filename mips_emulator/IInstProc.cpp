@@ -33,14 +33,17 @@ void IInstProc::ProcessInstruction(pMipsCpu* cpu, MipsInstruction& inst)
 {
     switch (inst.opcode) {
         case ADDIU_OPCODE:
-            std::cout << std::setfill('0') << std::setw(0) << std::right << std::hex;
-            std::cout << "RS (" << inst.i_inst.rs << "): 0x" << cpu->registers[inst.i_inst.rs];
-            std::cout << "RT (" << inst.i_inst.rt << "): 0x" << cpu->registers[inst.i_inst.rt];
-            std::cout << "Adding " << std::dec << inst.i_inst.immed << std::hex;
-            cpu->registers[inst.i_inst.rt] = cpu->registers[inst.i_inst.rs] + inst.i_inst.immed;
+            std::cout << "\tRS (" << std::dec << inst.i_inst.rs << "): 0x" << std::setfill('0') << std::setw(0) << std::right << std::hex << cpu->registers[inst.i_inst.rs];
+            std::cout << "\tRT (" << inst.i_inst.rt << "): 0x" << cpu->registers[inst.i_inst.rt];
             
-            std::cout << "RS (" << inst.i_inst.rs << "): 0x" << cpu->registers[inst.i_inst.rs];
-            std::cout << "RT (" << inst.i_inst.rt << "): 0x" << cpu->registers[inst.i_inst.rt];
+            std::cout << "\tAdding " << std::dec << inst.i_inst.immed << std::hex << std::endl;
+            uint32_t immed;
+            SIGN_EXTEND(16, immed, inst.i_inst.immed);
+            cpu->registers[inst.i_inst.rt] = cpu->registers[inst.i_inst.rs] + immed;
+            
+            std::cout << "\tRS (" << inst.i_inst.rs << "): 0x" << cpu->registers[inst.i_inst.rs];
+            std::cout << "\tRT (" << inst.i_inst.rt << "): 0x" << cpu->registers[inst.i_inst.rt];
+            std::cout << std::endl;
             break;
         default:
             std::cout << "Unimplemented I-Type instruction!" << std::endl;
