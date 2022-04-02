@@ -31,11 +31,9 @@ IInstProc::~IInstProc()
 
 void IInstProc::ProcessInstruction(pMipsCpu* cpu, MipsInstruction& inst)
 {
+    inst.type = I_INST;
     switch (inst.opcode) {
         case ADDIU_OPCODE:
-            std::cout << "\tRS (" << std::dec << inst.i_inst.rs << "): 0x" << std::setfill('0') << std::setw(0) << std::right << std::hex << cpu->registers[inst.i_inst.rs];
-            std::cout << "\tRT (" << inst.i_inst.rt << "): 0x" << cpu->registers[inst.i_inst.rt];
-            
             std::cout << "\tAdding " << std::dec << inst.i_inst.immed << std::hex << std::endl;
             uint32_t immed;
             SIGN_EXTEND(16, immed, inst.i_inst.immed);

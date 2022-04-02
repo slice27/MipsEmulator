@@ -48,6 +48,7 @@ RInstProc::~RInstProc()
 
 void RInstProc::ProcessInstruction(pMipsCpu* cpu, MipsInstruction &inst)
 {
+    inst.type = R_INST;
     switch (inst.r_inst.func) {
         case SLL_FUNC:
             break;

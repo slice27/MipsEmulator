@@ -14,6 +14,7 @@ JInstProc::~JInstProc()
 
 void JInstProc::ProcessInstruction(pMipsCpu* cpu, MipsInstruction &inst)
 {
+    inst.type = J_INST;
     if (inst.opcode == JALINST_OPCODE) {
         cpu->registers[31] = cpu->pc;
     }
