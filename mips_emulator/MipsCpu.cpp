@@ -136,11 +136,24 @@ void pMipsCpu::PrintInstruction(MipsInstruction &inst)
     switch (inst.type)
     {
         case R_INST:
+            std::cout << "Type: R_INST";
+            std::cout << std::hex;
+            std::cout << "\tOP   (0x" << std::setw(2) << std::setfill('0') << std::right << inst.opcode << ")";
+            std::cout << "\tFUNC (0x" << std::setw(2) << std::setfill('0') << std::right << inst.r_inst.func << ")";
+            std::cout << "\tRS   (0x" << std::setw(2) << std::setfill('0') << std::right << inst.r_inst.rs << ")";
+            std::cout << "\tRD   (0x" << std::setw(2) << std::setfill('0') << std::right << inst.r_inst.rd << ")";
+            std::cout << "\tRT   (0x" << std::setw(2) << std::setfill('0') << std::right << inst.r_inst.rt << ")";
+            std::cout << "\tSHFT (0x" << std::setw(2) << std::setfill('0') << std::right << inst.r_inst.shft_amt << ")";
+            std::cout << std::endl;
+            
             break;
         case I_INST:
-            std::cout << "\tRS  (" << std::dec << inst.i_inst.rs << "): 0x" << std::setfill('0') << std::setw(0) << std::right << std::hex << registers[inst.i_inst.rs];
-            std::cout << "\tRT  (" << inst.i_inst.rt << "): 0x" << registers[inst.i_inst.rt];
-            std::cout << "\tIMD (" << (uint32_t)inst.i_inst.immed << ")" << std::endl;
+            std::cout << "Type: I_INST";
+            std::cout << std::hex;
+            std::cout << "\tOP  (0x" << std::setw(2) << std::setfill('0') << std::right << inst.opcode << ")";
+            std::cout << "\tRS  (0x" << std::setw(2) << std::setfill('0') << inst.i_inst.rs << "): 0x" << registers[inst.i_inst.rs];
+            std::cout << "\tRT  (0x" << std::setw(2) << std::setfill('0') << inst.i_inst.rt << "): 0x" << registers[inst.i_inst.rt];
+            std::cout << "\tIMD (0x" << std::setw(4) << std::setfill('0') << (uint32_t)inst.i_inst.immed << ")" << std::endl;
             break;
         case J_INST:
             break;
