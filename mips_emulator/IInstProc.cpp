@@ -21,6 +21,8 @@
 #define XORI_OPCODE   0x0e
 #define LUI_OPCODE    0x0f
 
+#define SW_OPCODE     0x2b
+
 IInstProc::IInstProc()
 {
 }
@@ -33,16 +35,26 @@ void IInstProc::ProcessInstruction(pMipsCpu* cpu, MipsInstruction& inst)
 {
     inst.type = I_INST;
     switch (inst.opcode) {
-        case ADDIU_OPCODE:
-            std::cout << "\tAdding " << std::dec << inst.i_inst.immed << std::hex << std::endl;
+        case ADDIU_OPCODE: {
+            std::cout << "ADDIU:\t" << std::dec << inst.i_inst.immed << std::endl;
             
             uint32_t immed;
             SIGN_EXTEND(16, immed, inst.i_inst.immed);
             cpu->registers[inst.i_inst.rt] = cpu->registers[inst.i_inst.rs] + immed;
             cpu->PrintInstruction(inst);
-            break;
+        } break;
+        case SW_OPCODE: {
+            uint32_t immed;
+            SIGN_EXTEND(16, immed, inst.i_inst.rs);
+            immed += inst.i_inst.immed;
+            std::cout << "SW:\t0x" << std::hex << std::setw(8) << std::setfill('0') << immed << std::endl;
+
+            cpu->mmu[immed] = cpu->registers[inst.i_inst.rt];
+            cpu->PrintInstruction(inst);
+        } break;
         default:
             std::cout << "Unimplemented I-Type instruction!" << std::endl;
+            cpu->PrintInstruction(inst);
             assert(false);
             break;
     }
