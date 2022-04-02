@@ -132,6 +132,22 @@ void pMipsCpu::PrintRegisters()
     std::cout << "PC: 0x" << pc << "\tEPC: 0x" << epc << std::endl << std::endl;
 }
 
+void pMipsCpu::PrintInstruction(MipsInstruction inst)
+{
+    switch (inst.type)
+    {
+        case R_INST:
+            break;
+        case I_INST:
+            std::cout << "\tRS  (" << std::dec << inst.i_inst.rs << "): 0x" << std::setfill('0') << std::setw(0) << std::right << std::hex << registers[inst.i_inst.rs];
+            std::cout << "\tRT  (" << inst.i_inst.rt << "): 0x" << registers[inst.i_inst.rt];
+            std::cout << "\tIMD (" << (uint32_t)inst.i_inst.immed << ")" << std::endl;
+            break;
+        case J_INST:
+            break;
+    }
+}
+
 MipsCpu::MipsCpu():
     priv(std::make_unique<pMipsCpu>())
 {

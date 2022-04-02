@@ -27,6 +27,7 @@ private:
     void Decode(uint32_t instruction, MipsInstruction& decoded);
     void Execute(MipsInstruction &inst);
     void PrintRegisters();
+    void PrintInstruction(MipsInstruction inst);
     
     friend class RInstProc;
     friend class JInstProc;

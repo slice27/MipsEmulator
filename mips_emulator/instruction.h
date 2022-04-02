@@ -3,6 +3,13 @@
 
 #include <stdint.h>
 
+enum InstructionType
+{
+    R_INST,
+    J_INST,
+    I_INST,
+};
+
 struct r_instruction {
     uint32_t rs;
     uint32_t rt;
@@ -23,6 +30,7 @@ struct j_instruction {
 
 struct MipsInstruction
 {
+    InstructionType type;
     uint32_t opcode;
     union {
         struct r_instruction r_inst;
@@ -30,7 +38,6 @@ struct MipsInstruction
         struct j_instruction j_inst;
     };
 };
-
 
 
 #endif
