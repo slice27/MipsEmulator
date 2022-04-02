@@ -35,13 +35,12 @@ void pMipsCpu::Run()
     
     MipsInstruction inst;
     while (!halted) {
+        ++cpu_cycles;
         PrintRegisters();
         uint32_t opcode = Fetch();
         Decode(opcode, inst);
         Execute(inst);
         PrintRegisters();
-        ++cpu_cycles;
-        assert(false);
     }
     std::cout << "NOP: " << nop_count << std::endl;
 }
