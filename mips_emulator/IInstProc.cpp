@@ -35,13 +35,11 @@ void IInstProc::ProcessInstruction(pMipsCpu* cpu, MipsInstruction& inst)
     switch (inst.opcode) {
         case ADDIU_OPCODE:
             std::cout << "\tAdding " << std::dec << inst.i_inst.immed << std::hex << std::endl;
+            
             uint32_t immed;
             SIGN_EXTEND(16, immed, inst.i_inst.immed);
             cpu->registers[inst.i_inst.rt] = cpu->registers[inst.i_inst.rs] + immed;
-            
-            std::cout << "\tRS (" << inst.i_inst.rs << "): 0x" << cpu->registers[inst.i_inst.rs];
-            std::cout << "\tRT (" << inst.i_inst.rt << "): 0x" << cpu->registers[inst.i_inst.rt];
-            std::cout << std::endl;
+            cpu->PrintInstruction(inst);
             break;
         default:
             std::cout << "Unimplemented I-Type instruction!" << std::endl;

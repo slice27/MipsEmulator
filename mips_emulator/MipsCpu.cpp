@@ -53,7 +53,6 @@ uint32_t pMipsCpu::Fetch()
     // TODO: Add breakpoint handling here.
     pc += sizeof(uint32_t);
     uint32_t inst = mmu[op_addr];
-    std::cout << "Inst: 0x" << std::hex << inst;
     return mmu[op_addr];
 }
     
@@ -132,7 +131,7 @@ void pMipsCpu::PrintRegisters()
     std::cout << "PC: 0x" << pc << "\tEPC: 0x" << epc << std::endl << std::endl;
 }
 
-void pMipsCpu::PrintInstruction(MipsInstruction inst)
+void pMipsCpu::PrintInstruction(MipsInstruction &inst)
 {
     switch (inst.type)
     {
