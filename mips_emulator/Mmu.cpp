@@ -6,7 +6,7 @@
 
 #define MEM_PAGE_SIZE 4096U
 #define MEM_PAGE_MASK 0xfffff000U
-#define MEM_PAGE_ADDR 0x00000fffU
+#define MEM_PAGE_ADDR ~MEM_PAGE_MASK
 #define MEM_PAGE_PAGE std::array<uint8_t, MEM_PAGE_SIZE>
 
 class pMmu
