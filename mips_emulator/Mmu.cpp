@@ -7,6 +7,7 @@
 #define MEM_PAGE_SIZE 4096U
 #define MEM_PAGE_MASK 0xfffff000U
 #define MEM_PAGE_ADDR ~MEM_PAGE_MASK
+#define MEM_PAGE_PRINT_WIDTH 64
 #define MEM_PAGE_PAGE std::array<uint8_t, MEM_PAGE_SIZE>
 
 class pMmu
@@ -35,6 +36,12 @@ public:
     uint32_t& operator[](uint32_t addr)
     {
         return *(uint32_t*)(&GetPage(addr)[addr & MEM_PAGE_ADDR]);
+    }
+
+    void PrintPage(uint32_t addr)
+    {
+        uint8_t *page = GetPage(addr);
+        for (int i = 0; i < MEM_PAGE_SIZE; ++i)
     }
     
 private:

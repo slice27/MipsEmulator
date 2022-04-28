@@ -15,6 +15,8 @@ public:
     Mmu& operator=(Mmu&&) = delete;
     
     uint32_t& operator[](uint32_t);
+
+    void PrintPage(uint32_t addr);
 private:
     std::unique_ptr<pMmu> priv;
 };
