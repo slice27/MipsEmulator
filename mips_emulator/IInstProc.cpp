@@ -45,8 +45,10 @@ void IInstProc::ProcessInstruction(pMipsCpu* cpu, MipsInstruction& inst)
         } break;
         case SW_OPCODE: {
             uint32_t immed;
-            SIGN_EXTEND(16, immed, inst.i_inst.rs);
+            SIGN_EXTEND(16, immed, cpu->registers[inst.i_inst.rs]);
             immed += inst.i_inst.immed;
+            std::cout << "CNC Immed: 0x" << std::hex << immed << std::endl;
+            
             std::cout << "SW:\t0x" << std::hex << std::setw(8) << std::setfill('0') << immed << std::endl;
 
             cpu->mmu[immed] = cpu->registers[inst.i_inst.rt];
